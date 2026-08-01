@@ -2,13 +2,20 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 
-base_url = "https://store.steampowered.com/category/"
-f = open("category_urls.txt", "r")
-for line in f:
-    print(f.readline())
 
-#content = requests.get(url).text
-#soup = BeautifulSoup(content, 'html.parser')
-#tags = soup.find_all("div", class_ = "tab_item_title")
-#for tag in tags:
-    #print(tag.text)
+def find_app_ids(limit = 10):
+    #create a dictionary that maps app id to app name
+    url = "https://store.steampowered.com/search/"
+    dict = {}
+    content = requests.get(url).text
+    soup = BeautifulSoup(content, 'html.parser')
+    search_result = soup.find_all("a", class_ = "search_result_row")
+    search_result = search_result[0:limit]
+    
+    for game in search_result:
+        game_name = game.find("span", class_ = "title")
+        game_id = game["data-ds-appid"]
+        dict[game_id] = game_name.text
+
+    print(dict)
+find_app_ids(20)

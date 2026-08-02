@@ -54,6 +54,9 @@ def release_date(soup, game_attributes):
 
 def devpub(soup, game_attributes):
     dev_row = soup.find_all("div", class_ = "dev_row")
+    if not dev_row:
+        game_attributes.append("None")
+        game_attributes.append("None")
     dev = dev_row[0]
     game_attributes.append(dev.find("a").text)
     pub = dev_row[1]
@@ -62,7 +65,15 @@ def devpub(soup, game_attributes):
 
 def genre(soup, game_attributes):
     genre_list = []
-    genres = soup.find("div", class_ = "details_block").find("span").find_all("a")
+    div = soup.find("div", class_ = "details_block")
+    if not div:
+        return game_attributes.append(["None"])
+    content = div.find("span")
+    if not content:
+        return game_attributes.append(["None"])
+    genres = content.find_all("a")
+    if not genres:
+        return game_attributes.append(["None"])
     for genre in genres:
         genre_list.append(genre.text.strip())
         if len(genre_list) > 3:

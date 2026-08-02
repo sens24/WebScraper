@@ -36,17 +36,66 @@ def find_app_ids(limit = 200): #set a default limit of 200
             game_name = game.find("span", class_ = "title")
             game_id = game["data-ds-appid"]
             dict[game_id] = game_name.text
+            if game_name.text in ["Steam Machine", "Steam Deck", "Steam Controller"]: #these will cause issues in other code segments
+                dict.pop(game_id)
             if len(dict) == limit:
-                print(f"Scraped through {limit} games on Steam!")
+                print(f"Scraping through {limit} games on Steam!\n")
                 return dict
 
         time.sleep(0.5)
 
     return dict
 
-dict = find_app_ids(10)
 
-def visit_page(dict):
+def price(soup, game_attributes):
+    discount = soup.find("div", class_ = "discount_prices")
+    if discount != None:
+        base_price = soup.find("div", "discount_original_price")
+        discount_price = soup.find("div", "discount_final_price")
+        if base_price and discount_price: #there exists bundling that does not include base price
+            game_attributes.append(base_price.text.strip())
+            game_attributes.append(discount_price.text.strip())
+        else:
+            price = soup.find("div", class_ = "game_purchase_price price")
+            if price:
+                game_attributes.append(price.text.strip())
+                game_attributes.append("No Discount")
+            else:
+                game_attributes.append("No Price")
+                game_attributes.append("No Discount")
+    else:
+        price = soup.find("div", class_ = "game_purchase_price price")
+        if price:
+            game_attributes.append(price.text.strip())
+            game_attributes.append("No Discount")
+        else:
+            game_attributes.append("No Price")
+            game_attributes.append("No Discount") 
+
+    return game_attributes
+
+def reviews(soup, game_attributes):
+    total_reviews = soup.find_all("span", class_ = "user_reviews_count")
+    if not total_reviews:
+        game_attributes.append("0")
+        game_attributes.append("0")
+        game_attributes.append("0")
+        return game_attributes
+    total = total_reviews[0]
+    positive_reviews = total_reviews[1]
+    negative_reviews = total_reviews[2]
+    game_attributes.append(total.text.replace('(', '').replace(")", ""))
+    game_attributes.append(positive_reviews.text.replace('(', '').replace(")", ""))
+    game_attributes.append(negative_reviews.text.replace('(', '').replace(")", ""))
+    
+    review_sentiment = soup.find("span", class_ = "game_review_summary")
+    game_attributes.append(review_sentiment.text)
+
+    return game_attributes
+
+def visit_page():
+    limit = int(input("How many steam games would you like to scrape from the search engine?: "))
+    dict = find_app_ids(limit)
     base_url = "https://store.steampowered.com/app/"
     #https://store.steampowered.com/app/730/CounterStrike_2/
     #example app format: url + id + "/" + Name + "/"
@@ -57,23 +106,19 @@ def visit_page(dict):
         game_attributes.append(game_name)
         
         url = base_url + key + "/" + game_name + "/"
+        print(f"url: " + url)
         content = requests.get(url).text
         soup = BeautifulSoup(content, 'html.parser')
+
         #release_date
         date = soup.find("div", class_ = "release_date")
-        game_attributes.append(date.find("div", class_ = "date").text);
+        if date:
+            game_attributes.append(date.find("div", class_ = "date").text);
+        else:
+            game_attributes.append("N/A")
 
         #price/discount
-        discount = soup.find("div", class_ = "discount_prices")
-        if discount != None:
-            base_price = soup.find("div", "discount_original_price")
-            discount_price = soup.find("div", "discount_final_price")
-            game_attributes.append(base_price.text.strip())
-            game_attributes.append(discount_price.text.strip())
-        else:
-            price = soup.find("div", class_ = "game_purchase_price price")
-            game_attributes.append(price.text.strip())
-            game_attributes.append("No Discount")
+        game_attributes = price(soup, game_attributes)
 
         #developer and publisher
         dev_row = soup.find_all("div", class_ = "dev_row")
@@ -83,31 +128,24 @@ def visit_page(dict):
         game_attributes.append(pub.find("a").text)
 
         #reviews
-        total_reviews = soup.find_all("span", class_ = "user_reviews_count")
-        total = total_reviews[0]
-        positive_reviews = total_reviews[1]
-        negative_reviews = total_reviews[2]
-        game_attributes.append(total.text.replace('(', '').replace(")", ""))
-        game_attributes.append(positive_reviews.text.replace('(', '').replace(")", ""))
-        game_attributes.append(negative_reviews.text.replace('(', '').replace(")", ""))
-
-        review_sentiment = soup.find("span", class_ = "game_review_summary")
-        game_attributes.append(review_sentiment.text)
+        game_attributes = reviews(soup, game_attributes)
 
         #genres
         genre_list = []
         genres = soup.find("div", class_ = "details_block").find("span").find_all("a")
         for genre in genres:
             genre_list.append(genre.text.strip())
+            if len(genre_list) > 3:
+                break
         game_attributes.append(genre_list)
 
 
 
         dict[key] = game_attributes
         print(game_attributes)
+    return dict
 
-visit_page(dict)
-
+place_holder = visit_page()
 
 #for later usage, the dict is structured 
 # app_id: [name, date released, price, discounted_price (if exists), developer, publisher, 

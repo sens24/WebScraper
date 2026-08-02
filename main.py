@@ -28,7 +28,6 @@ def find_app_ids(limit = 200): #set a default limit of 200
             print("No more games found.")
             break
 
-
         soup = BeautifulSoup(html_chunk, 'html.parser')
         search_result = soup.find_all("a", class_ = "search_result_row")
         search_result = search_result[0:100]
@@ -61,14 +60,14 @@ def visit_page():
         game_attributes.append(game_name)
         
         url = base_url + key + "/" + game_name + "/"
-        print(f"url: " + url)
+        print(f"url: {url}\n")
         content = requests.get(url).text
         soup = BeautifulSoup(content, 'html.parser')
 
         attribute_module.get_info(soup, game_attributes)
 
         dict[key] = game_attributes
-        print(game_attributes)
+        print(str(game_attributes[0]))
 
     return dict
 
@@ -79,9 +78,15 @@ def transform_df(dict):
                                                                    "Publisher", "Total Reviews", "Positive Reviews", 
                                                                    "Negative Reviews", "Review Sentiment", "Genre(s)"])
     print(df)
-place_holder = visit_page()
-transform_df(place_holder)
+    return df
+
+def transform_csv(df):
+    #transform dataframe into a CSV
+    df.to_csv("scraped_steam_games.csv", index = False)
+
+
+
+
 #for later usage, the dict is structured 
 # app_id: [name, date released, price, discounted_price (if exists), developer, publisher, 
 # total reviews, positive reviews, negative reviews, overall review sentiment, [genres]]
-# make the code more readable -> add functions for every single attribute, and add a gather_info function

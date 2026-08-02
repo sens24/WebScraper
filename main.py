@@ -18,7 +18,6 @@ def find_app_ids(limit = 200): #set a default limit of 200
                 'cc': 'us',
                 'l': "english"
         }
-        print(f"start: {start}")
         content = requests.get(url, params = param_grid)
         json_data = content.json()
         #obtain the HTML chunk
@@ -38,21 +37,55 @@ def find_app_ids(limit = 200): #set a default limit of 200
             game_id = game["data-ds-appid"]
             dict[game_id] = game_name.text
             if len(dict) == limit:
+                print(f"Scraped through {limit} games on Steam!")
                 return dict
 
         time.sleep(0.5)
 
     return dict
 
-print(len(find_app_ids(117)))
+dict = find_app_ids(3)
 
 def visit_page(dict):
     base_url = "https://store.steampowered.com/app/"
     #https://store.steampowered.com/app/730/CounterStrike_2/
     #example app format: url + id + "/" + Name + "/"
     for key in dict:
+        #pointing every key (app id) to a list of attributes
+        game_attributes = []
         game_name = dict[key]
-        url = base_url + id + "/" + game_name + "/"
+        game_attributes.append(game_name)
+
+        url = base_url + key + "/" + game_name + "/"
         content = requests.get(url).text
         soup = BeautifulSoup(content, 'html.parser')
-        search_result = soup.find()
+        #release_date
+        date = soup.find("div", class_ = "release_date")
+        game_attributes.append(date.find("div", class_ = "date").text);
+
+        #price
+        price = soup.find("div", class_ = "game_purchase_price price")
+        game_attributes.append(price.text.strip())
+
+        #reviews
+        total_reviews = soup.find_all("span", class_ = "user_reviews_count")
+        total = total_reviews[0]
+        positive_reviews = total_reviews[1]
+        negative_reviews = total_reviews[2]
+        game_attributes.append(total.text.replace('(', '').replace(")", ""))
+        game_attributes.append(positive_reviews.text.replace('(', '').replace(")", ""))
+        game_attributes.append(negative_reviews.text.replace('(', '').replace(")", ""))
+
+        review_sentiment = soup.find("span", class_ = "game_review_summary")
+        game_attributes.append(review_sentiment.text)
+
+
+
+        dict[key] = game_attributes
+        print(game_attributes)
+
+visit_page(dict)
+print(dict)
+
+
+#for later usage, the dict is structured app_id: [name, date released, price, total reviews, positive reviews, negative reviews, overall review sentiment, ]

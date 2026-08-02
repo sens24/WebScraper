@@ -84,8 +84,14 @@ def transform_csv(df):
     #transform dataframe into a CSV
     df.to_csv("scraped_steam_games.csv", index = False)
 
+def main():
+    dict = visit_page()
+    df = transform_df(dict)
+    transform_csv(df)
 
 
+if __name__ == "__main__":
+    main()
 
 #for later usage, the dict is structured 
 # app_id: [name, date released, price, discounted_price (if exists), developer, publisher, 

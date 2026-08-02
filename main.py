@@ -48,6 +48,7 @@ def find_app_ids(limit = 200): #set a default limit of 200
 
 def visit_page():
     limit = int(input("How many steam games would you like to scrape from the search engine?: "))
+    url_visual = input("Would you like to see the scraped games and urls as they are being scraped?: (Y/N) ")
     dict = find_app_ids(limit)
     base_url = "https://store.steampowered.com/app/"
     #https://store.steampowered.com/app/730/CounterStrike_2/
@@ -60,14 +61,16 @@ def visit_page():
         game_attributes.append(game_name)
         
         url = base_url + key + "/" + game_name + "/"
-        print(f"url: {url}\n")
+        if url_visual == "Y":
+            print(f"url: {url}\n")
         content = requests.get(url).text
         soup = BeautifulSoup(content, 'html.parser')
 
         attribute_module.get_info(soup, game_attributes)
 
         dict[key] = game_attributes
-        print(str(game_attributes[0]))
+        if url_visual == "Y":
+            print(str(game_attributes[0]))
 
     return dict
 
@@ -77,12 +80,12 @@ def transform_df(dict):
                                                                    "Price", "Discount", "Developer", 
                                                                    "Publisher", "Total Reviews", "Positive Reviews", 
                                                                    "Negative Reviews", "Review Sentiment", "Genre(s)"])
-    print(df)
     return df
 
 def transform_csv(df):
     #transform dataframe into a CSV
     df.to_csv("scraped_steam_games.csv", index = False)
+    print("CSV Outputted Successfully!")
 
 def main():
     dict = visit_page()

@@ -44,7 +44,7 @@ def find_app_ids(limit = 200): #set a default limit of 200
 
     return dict
 
-dict = find_app_ids(3)
+dict = find_app_ids(10)
 
 def visit_page(dict):
     base_url = "https://store.steampowered.com/app/"
@@ -67,6 +67,12 @@ def visit_page(dict):
         price = soup.find("div", class_ = "game_purchase_price price")
         game_attributes.append(price.text.strip())
 
+        #developer and publisher
+        dev_row = soup.find_all("div", class_ = "dev_row")
+        dev = dev_row[0]
+        game_attributes.append(dev.find("a").text)
+        pub = dev_row[1]
+        game_attributes.append(pub.find("a").text)
         #reviews
         total_reviews = soup.find_all("span", class_ = "user_reviews_count")
         total = total_reviews[0]
@@ -88,4 +94,5 @@ visit_page(dict)
 print(dict)
 
 
-#for later usage, the dict is structured app_id: [name, date released, price, total reviews, positive reviews, negative reviews, overall review sentiment, ]
+#for later usage, the dict is structured 
+# app_id: [name, date released, price, developer, publisher, total reviews, positive reviews, negative reviews, overall review sentiment, [genres]]

@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import time
 
-def find_app_ids(limit = 200):
+def find_app_ids(limit = 200): #set a default limit of 200
     #create a dictionary that maps app id to app name
     #each "page" of the search has 50 games
     count_per_page = 50
@@ -37,12 +37,14 @@ def find_app_ids(limit = 200):
             game_name = game.find("span", class_ = "title")
             game_id = game["data-ds-appid"]
             dict[game_id] = game_name.text
+            if len(dict) == limit:
+                return dict
 
         time.sleep(0.5)
 
     return dict
 
-print(len(find_app_ids(249)))
+print(len(find_app_ids(117)))
 
 def visit_page(dict):
     base_url = "https://store.steampowered.com/app/"

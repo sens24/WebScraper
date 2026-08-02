@@ -8,7 +8,7 @@ def find_app_ids(limit = 200): #set a default limit of 200
     #each "page" of the search has 50 games
     count_per_page = 50
     dict = {}
-    for start in range(0, limit, count_per_page):
+    for start in range(0, limit, count_per_page): #could implement randomization into this, choose a random start point
         url = "https://store.steampowered.com/search/results/"
         param_grid = {
                 'query' : '',
@@ -93,6 +93,33 @@ def reviews(soup, game_attributes):
 
     return game_attributes
 
+def release_date(soup, game_attributes):
+    date = soup.find("div", class_ = "release_date")
+    if date:
+        game_attributes.append(date.find("div", class_ = "date").text);
+    else:
+        game_attributes.append("N/A")
+    return game_attributes
+
+def devpub(soup, game_attributes):
+    dev_row = soup.find_all("div", class_ = "dev_row")
+    dev = dev_row[0]
+    game_attributes.append(dev.find("a").text)
+    pub = dev_row[1]
+    game_attributes.append(pub.find("a").text)
+    return game_attributes
+
+def genre(soup, game_attributes):
+    genre_list = []
+    genres = soup.find("div", class_ = "details_block").find("span").find_all("a")
+    for genre in genres:
+        genre_list.append(genre.text.strip())
+        if len(genre_list) > 3:
+            break
+    game_attributes.append(genre_list)
+    return game_attributes
+
+
 def visit_page():
     limit = int(input("How many steam games would you like to scrape from the search engine?: "))
     dict = find_app_ids(limit)
@@ -111,35 +138,19 @@ def visit_page():
         soup = BeautifulSoup(content, 'html.parser')
 
         #release_date
-        date = soup.find("div", class_ = "release_date")
-        if date:
-            game_attributes.append(date.find("div", class_ = "date").text);
-        else:
-            game_attributes.append("N/A")
+        release_date(soup, game_attributes)
 
         #price/discount
-        game_attributes = price(soup, game_attributes)
+        price(soup, game_attributes)
 
         #developer and publisher
-        dev_row = soup.find_all("div", class_ = "dev_row")
-        dev = dev_row[0]
-        game_attributes.append(dev.find("a").text)
-        pub = dev_row[1]
-        game_attributes.append(pub.find("a").text)
+        devpub(soup, game_attributes)
 
         #reviews
-        game_attributes = reviews(soup, game_attributes)
+        reviews(soup, game_attributes)
 
         #genres
-        genre_list = []
-        genres = soup.find("div", class_ = "details_block").find("span").find_all("a")
-        for genre in genres:
-            genre_list.append(genre.text.strip())
-            if len(genre_list) > 3:
-                break
-        game_attributes.append(genre_list)
-
-
+        genre(soup, game_attributes)
 
         dict[key] = game_attributes
         print(game_attributes)
@@ -150,3 +161,4 @@ place_holder = visit_page()
 #for later usage, the dict is structured 
 # app_id: [name, date released, price, discounted_price (if exists), developer, publisher, 
 # total reviews, positive reviews, negative reviews, overall review sentiment, [genres]]
+# make the code more readable -> add functions for every single attribute, and add a gather_info function

@@ -47,14 +47,13 @@ def find_app_ids(limit = 200): #set a default limit of 200
 
     return dict
 
-
-
 def visit_page():
     limit = int(input("How many steam games would you like to scrape from the search engine?: "))
     dict = find_app_ids(limit)
     base_url = "https://store.steampowered.com/app/"
     #https://store.steampowered.com/app/730/CounterStrike_2/
     #example app format: url + id + "/" + Name + "/"
+
     for key in dict:
         #pointing every key (app id) to a list of attributes
         game_attributes = []
@@ -66,27 +65,22 @@ def visit_page():
         content = requests.get(url).text
         soup = BeautifulSoup(content, 'html.parser')
 
-        #release_date
-        attribute_module.release_date(soup, game_attributes)
-
-        #price/discount
-        attribute_module.price(soup, game_attributes)
-
-        #developer and publisher
-        attribute_module.devpub(soup, game_attributes)
-
-        #reviews
-        attribute_module.reviews(soup, game_attributes)
-
-        #genres
-        attribute_module.genre(soup, game_attributes)
+        attribute_module.get_info(soup, game_attributes)
 
         dict[key] = game_attributes
         print(game_attributes)
+
     return dict
 
+def transform_df(dict):
+    #transform the dictionary into a pandas dataframe
+    df = pd.DataFrame.from_dict(dict, orient = "index", columns = ["Name", "Release Date", 
+                                                                   "Price", "Discount", "Developer", 
+                                                                   "Publisher", "Total Reviews", "Positive Reviews", 
+                                                                   "Negative Reviews", "Review Sentiment", "Genre(s)"])
+    print(df)
 place_holder = visit_page()
-
+transform_df(place_holder)
 #for later usage, the dict is structured 
 # app_id: [name, date released, price, discounted_price (if exists), developer, publisher, 
 # total reviews, positive reviews, negative reviews, overall review sentiment, [genres]]

@@ -70,3 +70,18 @@ def genre(soup, game_attributes):
     game_attributes.append(genre_list)
     return game_attributes
 
+def get_info(soup, game_attributes):
+    #release_date
+    release_date(soup, game_attributes)
+    
+    #price/discount
+    price(soup, game_attributes)
+    
+    #developer and publisher
+    devpub(soup, game_attributes)
+    
+    #reviews
+    reviews(soup, game_attributes)
+    
+    #genres
+    genre(soup, game_attributes)

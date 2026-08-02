@@ -55,7 +55,7 @@ def visit_page(dict):
         game_attributes = []
         game_name = dict[key]
         game_attributes.append(game_name)
-
+        
         url = base_url + key + "/" + game_name + "/"
         content = requests.get(url).text
         soup = BeautifulSoup(content, 'html.parser')
@@ -63,9 +63,17 @@ def visit_page(dict):
         date = soup.find("div", class_ = "release_date")
         game_attributes.append(date.find("div", class_ = "date").text);
 
-        #price
-        price = soup.find("div", class_ = "game_purchase_price price")
-        game_attributes.append(price.text.strip())
+        #price/discount
+        discount = soup.find("div", class_ = "discount_prices")
+        if discount != None:
+            base_price = soup.find("div", "discount_original_price")
+            discount_price = soup.find("div", "discount_final_price")
+            game_attributes.append(base_price.text.strip())
+            game_attributes.append(discount_price.text.strip())
+        else:
+            price = soup.find("div", class_ = "game_purchase_price price")
+            game_attributes.append(price.text.strip())
+            game_attributes.append("No Discount")
 
         #developer and publisher
         dev_row = soup.find_all("div", class_ = "dev_row")
@@ -73,6 +81,7 @@ def visit_page(dict):
         game_attributes.append(dev.find("a").text)
         pub = dev_row[1]
         game_attributes.append(pub.find("a").text)
+
         #reviews
         total_reviews = soup.find_all("span", class_ = "user_reviews_count")
         total = total_reviews[0]
@@ -85,14 +94,21 @@ def visit_page(dict):
         review_sentiment = soup.find("span", class_ = "game_review_summary")
         game_attributes.append(review_sentiment.text)
 
+        #genres
+        genre_list = []
+        genres = soup.find("div", class_ = "details_block").find("span").find_all("a")
+        for genre in genres:
+            genre_list.append(genre.text.strip())
+        game_attributes.append(genre_list)
+
 
 
         dict[key] = game_attributes
         print(game_attributes)
 
 visit_page(dict)
-print(dict)
 
 
 #for later usage, the dict is structured 
-# app_id: [name, date released, price, developer, publisher, total reviews, positive reviews, negative reviews, overall review sentiment, [genres]]
+# app_id: [name, date released, price, discounted_price (if exists), developer, publisher, 
+# total reviews, positive reviews, negative reviews, overall review sentiment, [genres]]

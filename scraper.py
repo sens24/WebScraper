@@ -59,14 +59,14 @@ def find_app_ids(begin = 0, limit = 200): #set a default limit of 200
 def visit_page():
     limit = int(input("How many steam games would you like to scrape from the search engine?: "))
     url_visual = input("Would you like to see the scraped games and urls as they are being scraped?: (Y/N) ")
-    dict = find_app_ids(begin = 1000, limit = limit)
+    dict = find_app_ids(begin = 0, limit = limit)
     base_url = "https://store.steampowered.com/app/"
     #https://store.steampowered.com/app/730/CounterStrike_2/
     #example app format: url + id + "/" + Name + "/"
 
     for key in dict:
         #pointing every key (app id) to a list of attributes
-        game_attributes = []
+        game_attributes = [key]
         game_name = dict[key]
         game_attributes.append(game_name)
         print(game_name)
@@ -87,7 +87,7 @@ def visit_page():
 
 def transform_df(dict):
     #transform the dictionary into a pandas dataframe
-    df = pd.DataFrame.from_dict(dict, orient = "index", columns = ["Name", "Release Date", 
+    df = pd.DataFrame.from_dict(dict, orient = "index", columns = ["GameID", "Name", "Release Date", 
                                                                    "Price", "Discount", "Developer", 
                                                                    "Publisher", "Total Reviews", "Positive Reviews", 
                                                                    "Negative Reviews", "Review Sentiment", "Genre(s)"])
@@ -95,7 +95,11 @@ def transform_df(dict):
 
 def transform_csv(df):
     #transform dataframe into a CSV
-    df.to_csv("scraped_steam_games_2.csv", index = False)
+    import os
+    bp = "raw/"
+    fn = "scraped_steam_games.csv"
+    fp = os.path.join(bp, fn)
+    df.to_csv(path_or_buf = fp, index = False)
     print("CSV Outputted Successfully!")
 
 def main():

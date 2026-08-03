@@ -4,9 +4,7 @@ import numpy as np
 import pandas as pd
 
 def concat():
-    df_1 = pd.read_csv("raw/scraped_steam_games.csv")
-    df_2 = pd.read_csv("raw/scraped_steam_games_2.csv")
-    df = pd.concat([df_1, df_2]).reset_index(drop = True)
+    df = pd.read_csv("raw/scraped_steam_games.csv")
     return df
 
 def release_date(df):
@@ -72,10 +70,14 @@ def main():
     import os
     bp = "raw/"
     fn = "cleaned_steam_games.parquet"
+    fn2 = "cleaned_steam_games.csv"
     fp = os.path.join(bp, fn)
+    fp2 = os.path.join(bp, fn2)
     df = concat()
     transform(df)
     df.to_parquet(path = fp)
-
+    df.to_csv(path_or_buf = fp2)
+    print("Successfully transformed!\n")
+    
 if __name__ == "__main__":
     main()

@@ -95,7 +95,7 @@ def transform_df(dict):
 
 def transform_csv(df):
     #transform dataframe into a CSV
-    df.to_csv("scraped_steam_games.csv", index = False)
+    df.to_csv("scraped_steam_games_2.csv", index = False)
     print("CSV Outputted Successfully!")
 
 def main():

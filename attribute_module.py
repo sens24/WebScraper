@@ -1,28 +1,25 @@
 def price(soup, game_attributes):
-    discount = soup.find("div", class_ = "discount_prices")
-    if discount != None:
-        base_price = soup.find("div", "discount_original_price")
-        discount_price = soup.find("div", "discount_final_price")
-        if base_price and discount_price: #there exists bundling that does not include base price
-            game_attributes.append(base_price.text.strip())
-            game_attributes.append(discount_price.text.strip())
-        else:
-            price = soup.find("div", class_ = "game_purchase_price price")
-            if price:
-                game_attributes.append(price.text.strip())
-                game_attributes.append("No Discount")
-            else:
-                game_attributes.append("No Price")
-                game_attributes.append("No Discount")
+    purchase_block = soup.find("div", class_ = "game_area_purchase_game")
+    if not purchase_block:
+        purhcase_block = soup.find("div", class_ = "game_area_purchase")
+    if not purchase_block:
+        game_attributes.append("No Price")
+        game_attributes.append("No Discount")
+        return game_attributes
+
+    base_price = purchase_block.find("div", "discount_original_price")
+    discount_price = purchase_block.find("div", "discount_final_price")
+    if base_price and discount_price:
+        game_attributes.append(base_price.text.strip())
+        game_attributes.append(discount_price.text.strip())
     else:
-        price = soup.find("div", class_ = "game_purchase_price price")
+        price = purchase_block.find("div", class_ = "game_purchase_price")
         if price:
             game_attributes.append(price.text.strip())
             game_attributes.append("No Discount")
         else:
             game_attributes.append("No Price")
-            game_attributes.append("No Discount") 
-
+            game_attributes.append("No Discount")
     return game_attributes
 
 def reviews(soup, game_attributes):
@@ -57,7 +54,8 @@ def devpub(soup, game_attributes):
     if not dev_row:
         game_attributes.append("None")
         game_attributes.append("None")
-        
+        return game_attributes
+
     dev = dev_row[0]
     game_attributes.append(dev.find("a").text)
     pub = dev_row[1]

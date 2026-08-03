@@ -57,10 +57,12 @@ def devpub(soup, game_attributes):
     if not dev_row:
         game_attributes.append("None")
         game_attributes.append("None")
+        
     dev = dev_row[0]
     game_attributes.append(dev.find("a").text)
     pub = dev_row[1]
     game_attributes.append(pub.find("a").text)
+    
     return game_attributes
 
 def genre(soup, game_attributes):

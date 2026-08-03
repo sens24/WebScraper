@@ -69,9 +69,13 @@ def transform(df):
     return df
 
 def main():
+    import os
+    bp = "raw/"
+    fn = "cleaned_steam_games.csv"
+    fp = os.path.join(bp, fn)
     df = concat()
     transform(df)
-    df.to_csv("cleaned_steam_games.csv")
+    df.to_csv(path_or_buf = fp)
 
 if __name__ == "__main__":
     main()

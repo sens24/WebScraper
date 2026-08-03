@@ -71,11 +71,11 @@ def transform(df):
 def main():
     import os
     bp = "raw/"
-    fn = "cleaned_steam_games.csv"
+    fn = "cleaned_steam_games.parquet"
     fp = os.path.join(bp, fn)
     df = concat()
     transform(df)
-    df.to_csv(path_or_buf = fp)
+    df.to_parquet(path = fp)
 
 if __name__ == "__main__":
     main()

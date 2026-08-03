@@ -59,7 +59,7 @@ def find_app_ids(begin = 0, limit = 200): #set a default limit of 200
 def visit_page():
     limit = int(input("How many steam games would you like to scrape from the search engine?: "))
     url_visual = input("Would you like to see the scraped games and urls as they are being scraped?: (Y/N) ")
-    dict = find_app_ids(begin = 1500, limit = limit)
+    dict = find_app_ids(begin = 1000, limit = limit)
     base_url = "https://store.steampowered.com/app/"
     #https://store.steampowered.com/app/730/CounterStrike_2/
     #example app format: url + id + "/" + Name + "/"
@@ -95,7 +95,7 @@ def transform_df(dict):
 
 def transform_csv(df):
     #transform dataframe into a CSV
-    df.to_csv("scraped_steam_games_4.csv", index = False)
+    df.to_csv("scraped_steam_games.csv", index = False)
     print("CSV Outputted Successfully!")
 
 def main():

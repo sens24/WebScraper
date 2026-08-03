@@ -6,7 +6,7 @@ import pandas as pd
 def concat():
     df_1 = pd.read_csv("raw/scraped_steam_games.csv")
     df_2 = pd.read_csv("raw/scraped_steam_games_2.csv")
-    df = pd.concat([df_1, df_2])
+    df = pd.concat([df_1, df_2]).reset_index(drop = True)
     return df
 
 def release_date(df):
@@ -71,7 +71,7 @@ def transform(df):
 def main():
     df = concat()
     transform(df)
-
+    df.to_csv("cleaned_steam_games.csv")
 
 if __name__ == "__main__":
     main()

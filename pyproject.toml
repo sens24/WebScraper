@@ -5,7 +5,6 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "ast",
     "bs4>=0.0.2",
     "lxml>=6.1.1",
     "numpy>=2.5.1",

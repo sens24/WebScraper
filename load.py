@@ -4,7 +4,7 @@ import pandas as pd
 from dotenv import load_dotenv
 import os
 import psycopg2
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 
 def connect():
     load_dotenv()
@@ -37,8 +37,34 @@ def split_df(df): #splits the df into two dataframes that abide by the schema
 
 def load_database(df_games, df_price):
     engine = connect();
-    df_games.to_sql("steam_games", con=engine, if_exists="append", index=False)
-    df_price.to_sql("steam_price_history", con=engine, if_exists="append", index=False)
+
+    with engine.begin() as conn:
+        df_games.to_sql(
+        name="temp_games_staging",
+        con=conn,
+        if_exists="replace", 
+        index=False
+    )
+        upsert_query = text("""
+        INSERT INTO games (game_id, name, developer, publisher, genres, genre_1, genre_2, genre_3, release_date, year_released)
+        SELECT game_id, name, developer, publisher, genres, genre_1, genre_2, genre_3, release_date, year_released
+        FROM temp_games_staging
+        ON CONFLICT (game_id) DO UPDATE SET
+            name = EXCLUDED.name,
+            developer = EXCLUDED.developer,
+            publisher = EXCLUDED.publisher,
+            genres = EXCLUDED.genres,
+            genre_1 = EXCLUDED.genre_1,
+            genre_2 = EXCLUDED.genre_2,
+            genre_3 = EXCLUDED.genre_3,
+            release_date = EXCLUDED.release_date,
+            year_released = EXCLUDED.year_released;
+    """)
+        conn.execute(upsert_query)
+        df_price.to_sql("steam_price_history", con=engine, if_exists="append", index=False)
+
+        
+    print("Database updated successfully\n")
 
 
 def main():

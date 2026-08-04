@@ -1,0 +1,86 @@
+#API 
+from fastapi import FastAPI, Path, HTTPException, BackgroundTasks
+import uvicorn
+from sqlalchemy import create_engine, text
+from dotenv import load_dotenv
+import psycopg2
+import os
+import pipeline
+app = FastAPI()
+
+#connect to the database
+load_dotenv()
+db_password = os.getenv("POSTGRES_PASSWORD")
+db_url = f"postgresql+psycopg2://postgres:{db_password}@localhost:5432/steam"
+engine = create_engine(db_url)
+
+@app.get("/")
+def root():
+    return {"status": 200}
+
+#get specific game information
+@app.get("/api/games/{game_name}")
+def get_game(game_name : str = Path(description = "Name of the game you would like to see the information of: ")):
+    query = text("""
+        SELECT g.developer, gp.price, gp.discount_pct, gp.discount, g.total_reviews, g.positive_reviews FROM
+        steam_games g JOIN steam_price_history gp ON g.game_id = gp.game_id WHERE g.name = :game_name 
+        ORDER BY gp.snapshot_id DESC LIMIT 1;
+    """)
+    with engine.begin() as conn:
+        result = conn.execute(query, {"game_name":game_name}).mappings().all()
+
+    if not result:
+        raise HTTPException(status_code = 404, detail = "Game Not Found")
+
+    return {"game_name": game_name, "data": list(result)}
+
+@app.get("/api/games/top-discounts")
+def get_discounts():
+    query = text("""SELECT DISTINCT ON (g.game_id) g.name, g.developer, gp.price, gp.discount, gp.discount_pct FROM
+                    steam_games g JOIN steam_price_history gp ON g.game_id = gp.game_id WHERE 
+                    g.total_reviews > 1000 ORDER BY gp.discount_pct DESC LIMIT 20;
+    """)
+
+    with engine.begin() as conn:
+        result = conn.execute(query).mappings().all()
+
+    if not result:
+        raise HTTPException(status_code = 404, detail = "Unable to retrieve")
+    return {"top_discounts": list(result)}
+
+@app.get("/api/games/top_reviews/{limit}")
+def get_reviews(limit: int):
+    query = text("""SELECT g.name, g.developer, g.total_reviews, g.positive_reviews_pct FROM steam_games g WHERE 
+                    g.total_reviews > 1000 ORDER BY g.positive_reviews_pct DESC LIMIT :limit;
+    """)
+
+    with engine.begin() as conn:
+            result = conn.execute(query, {"limit":limit}).mappings().all()
+    
+    if not result:
+        raise HTTPException(status_code = 404, detail = "Unable to retrieve")
+    return {"top_reviews" : list(result)}
+
+
+@app.get("/api/games/price_history/{game_name}")
+def get_game_price_history(game_name : str = Path(description = "Name of the game you would like to see the information of: ", gt = 0)):
+    query = text("""
+        SELECT g.name, gp.price, gp.discount_pct, gp.discount FROM
+        steam_games g JOIN steam_price_history gp ON g.game_id = gp.game_id WHERE g.name = :game_name 
+        ORDER BY gp.snapshot_id DESC LIMIT 5;
+    """)
+    with engine.begin() as conn:
+        result = conn.execute(query, {"game_name":game_name}).mappings().all()
+
+    if not result:
+        raise HTTPException(status_code = 404, detail = "Game Not Found")
+
+    return {"game_name": game_name, "data": list(result)}
+
+
+#endpoint to refresh web scraping
+@app.post("/api/admin/run_etl_pipeline")
+def run_etl_pipeline(background_tasks: BackgroundTasks):
+    background_tasks.add_task(pipeline.main())
+    return {"status": "accepted", "message": "ETL pipeline process started!"}
+

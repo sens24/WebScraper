@@ -1,18 +1,22 @@
 #API 
 from fastapi import FastAPI, Path, HTTPException, BackgroundTasks
+from fastapi.concurrency import run_in_threadpool
 import uvicorn
 from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
 import psycopg2
 import os
 import pipeline
+from sqlalchemy.pool import NullPool
+import multiprocessing 
+
 app = FastAPI()
 
 #connect to the database
 load_dotenv()
 db_password = os.getenv("POSTGRES_PASSWORD")
 db_url = f"postgresql+psycopg2://postgres:{db_password}@localhost:5432/steam"
-engine = create_engine(db_url)
+engine = create_engine(db_url, poolclass = NullPool)
 
 @app.get("/")
 def root():
@@ -22,8 +26,8 @@ def root():
 @app.get("/api/games/{game_name}")
 def get_game(game_name : str = Path(description = "Name of the game you would like to see the information of: ")):
     query = text("""
-        SELECT g.developer, gp.price, gp.discount_pct, gp.discount, g.total_reviews, g.positive_reviews FROM
-        steam_games g JOIN steam_price_history gp ON g.game_id = gp.game_id WHERE g.name = :game_name 
+        SELECT g.developer, gp.price, gp.discount_pct, gp.discount, gp.total_reviews, gp.positive_reviews FROM
+        steam_games g JOIN steam_price_history gp ON g.game_id = gp.game_id WHERE g.game_name = :game_name 
         ORDER BY gp.snapshot_id DESC LIMIT 1;
     """)
     with engine.begin() as conn:
@@ -80,7 +84,11 @@ def get_game_price_history(game_name : str = Path(description = "Name of the gam
 
 #endpoint to refresh web scraping
 @app.post("/api/admin/run_etl_pipeline")
-def run_etl_pipeline(background_tasks: BackgroundTasks):
-    background_tasks.add_task(pipeline.main())
-    return {"status": "accepted", "message": "ETL pipeline process started!"}
-
+async def run_etl_pipeline(background_tasks: BackgroundTasks):
+    p = multiprocessing.Process(target = pipeline.main)
+    p.start()
+    return {"status": "running in the background"}
+    
+@app.get("/health")
+def health_check():
+    return {"status":"up and running"}

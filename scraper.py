@@ -4,7 +4,7 @@ import pandas as pd
 import time
 import attribute_module
 
-def find_app_ids(begin = 0, limit = 200): #set a default limit of 200
+def find_app_ids(begin = 0, limit = 500): #set a default limit of 200
     #create a dictionary that maps app id to app name
     #each "page" of the search has 50 games
     count_per_page = 50
@@ -57,9 +57,7 @@ def find_app_ids(begin = 0, limit = 200): #set a default limit of 200
     return dict
 
 def visit_page():
-    limit = int(input("How many steam games would you like to scrape from the search engine?: "))
-    url_visual = input("Would you like to see the scraped games and urls as they are being scraped?: (Y/N) ")
-    dict = find_app_ids(begin = 0, limit = limit)
+    dict = find_app_ids(begin = 0, limit = 500)
     base_url = "https://store.steampowered.com/app/"
     #https://store.steampowered.com/app/730/CounterStrike_2/
     #example app format: url + id + "/" + Name + "/"
@@ -72,8 +70,6 @@ def visit_page():
         print(game_name)
         
         url = base_url + key + "/" + game_name + "/"
-        if url_visual == "Y":
-            print(f"url: {url}\n")
         content = requests.get(url).text
         time.sleep(3)
         soup = BeautifulSoup(content, 'html.parser')
@@ -81,8 +77,6 @@ def visit_page():
         attribute_module.get_info(soup, game_attributes)
 
         dict[key] = game_attributes
-        if url_visual == "Y":
-            print(str(game_attributes[0]))
     return dict
 
 def transform_df(dict):

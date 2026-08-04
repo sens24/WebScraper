@@ -69,7 +69,8 @@ def load_database(df_games, df_price):
 
 def main():
     df = read_df()
-    load_database(split_df(df))
+    df_games, df_price = split_df(df)
+    load_database(df_games, df_price)
     print("Successfully Loaded!\n")
 
 if __name__ == "__main__":

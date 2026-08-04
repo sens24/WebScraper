@@ -23,7 +23,7 @@ def root():
     return {"status": 200}
 
 #get specific game information
-@app.get("/api/games/{game_name}")
+@app.get("/api/games/search/{game_name}")
 def get_game(game_name : str = Path(description = "Name of the game you would like to see the information of: ")):
     query = text("""
         SELECT g.developer, gp.price, gp.discount_pct, gp.discount, gp.total_reviews, gp.positive_reviews FROM
@@ -38,11 +38,11 @@ def get_game(game_name : str = Path(description = "Name of the game you would li
 
     return {"game_name": game_name, "data": list(result)}
 
-@app.get("/api/games/top-discounts")
+@app.get("/api/games/top_discounts")
 def get_discounts():
-    query = text("""SELECT DISTINCT ON (g.game_id) g.name, g.developer, gp.price, gp.discount, gp.discount_pct FROM
+    query = text("""SELECT DISTINCT g.game_name, g.developer, gp.price, gp.discount, gp.discount_pct FROM
                     steam_games g JOIN steam_price_history gp ON g.game_id = gp.game_id WHERE 
-                    g.total_reviews > 1000 ORDER BY gp.discount_pct DESC LIMIT 20;
+                    gp.total_reviews > 5000 AND gp.discount_pct > 0 ORDER BY gp.discount_pct DESC LIMIT 100;
     """)
 
     with engine.begin() as conn:
@@ -50,20 +50,21 @@ def get_discounts():
 
     if not result:
         raise HTTPException(status_code = 404, detail = "Unable to retrieve")
-    return {"top_discounts": list(result)}
+    return {"top_discounts": [dict(row) for row in result]}
 
-@app.get("/api/games/top_reviews/{limit}")
-def get_reviews(limit: int):
-    query = text("""SELECT g.name, g.developer, g.total_reviews, g.positive_reviews_pct FROM steam_games g WHERE 
-                    g.total_reviews > 1000 ORDER BY g.positive_reviews_pct DESC LIMIT :limit;
+@app.get("/api/games/top_reviews/")
+def get_reviews():
+    query = text("""SELECT DISTINCT g.game_name, g.developer, gp.total_reviews, gp.positive_reviews_pct FROM steam_games g JOIN 
+    steam_price_history gp ON g.game_id = gp.game_id WHERE 
+                    gp.total_reviews > 5000 ORDER BY gp.positive_reviews_pct DESC LIMIT 100;
     """)
 
     with engine.begin() as conn:
-            result = conn.execute(query, {"limit":limit}).mappings().all()
+            result = conn.execute(query).mappings().all()
     
     if not result:
         raise HTTPException(status_code = 404, detail = "Unable to retrieve")
-    return {"top_reviews" : list(result)}
+    return {"top_reviews" : [dict(row) for row in result]}
 
 
 @app.get("/api/games/price_history/{game_name}")

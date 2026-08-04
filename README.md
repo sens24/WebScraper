@@ -1,7 +1,7 @@
 # Steam Analytics Platform
 author: sens24\
 This repository contains the code for the steam store web scraper and the frontend created with streamlit\
-Built by me to find the latest deals and top rated games on the steam store, live with snapshots of price history\
+Built by me to find the latest deals and top rated games on the steam store, live with snapshots of price history
 
 # Prerequisites
 you need uv installed (pip install uv)
@@ -16,5 +16,7 @@ then simply in the terminal run:\
 uv run run_app.py\
 or\
 uv run run_app_first_time.py \
-if it is your first time\
+if it is your first time
+
+
 

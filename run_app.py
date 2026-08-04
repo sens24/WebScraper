@@ -7,17 +7,15 @@
 import subprocess
 import time
 import load
-
 if __name__ == "__main__":
     print("Starting FastAPI Backend: ")
-    api_process = subprocess.Popen(["uvicorn", "main:app", "--port", "8000", "--reload"])
+    api_process = subprocess.Popen(["uvicorn", "api:app", "--port", "8000", "--reload"])
     print("Loading default data: ")
+    time.sleep(5)
     load.main()
-    time.sleep(2)
-
     print("Starting Streamlit Frontend")
     try:
-        subprocess.run(["streamlit", "run", "streamlit_app.py"])
+        subprocess.run(["streamlit", "run", "app.py"])
     finally:
         print("Shutting down FastAPI Backend...")
         api_process.terminate()

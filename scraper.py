@@ -57,7 +57,7 @@ def find_app_ids(begin = 0, limit = 500): #set a default limit of 200
     return dict
 
 def visit_page():
-    dict = find_app_ids(begin = 0, limit = 500)
+    dict = find_app_ids(begin = 0, limit = 10)
     base_url = "https://store.steampowered.com/app/"
     #https://store.steampowered.com/app/730/CounterStrike_2/
     #example app format: url + id + "/" + Name + "/"

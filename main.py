@@ -68,11 +68,11 @@ def get_reviews():
 
 
 @app.get("/api/games/price_history/{game_name}")
-def get_game_price_history(game_name : str = Path(description = "Name of the game you would like to see the information of: ", gt = 0)):
+def get_game_price_history(game_name : str = Path(description = "Name of the game you would like to see the information of: ")):
     query = text("""
-        SELECT g.name, gp.price, gp.discount_pct, gp.discount FROM
-        steam_games g JOIN steam_price_history gp ON g.game_id = gp.game_id WHERE g.name = :game_name 
-        ORDER BY gp.snapshot_id DESC LIMIT 5;
+        SELECT gp.price, gp.discount_pct, gp.discount FROM
+        steam_games g JOIN steam_price_history gp ON g.game_id = gp.game_id WHERE g.game_name = :game_name 
+        ORDER BY gp.snapshot_id DESC;
     """)
     with engine.begin() as conn:
         result = conn.execute(query, {"game_name":game_name}).mappings().all()

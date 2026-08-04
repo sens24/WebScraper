@@ -63,6 +63,24 @@ if sidebar == "Search":
             st.dataframe(search_df, hide_index = True)
         else:
             st.error("Invalid Game Name")
+
+    #price history
+    game_name = st.text_input("What game do you want to pull up the price history for?")
+    if game_name:
+        response = requests.get(base_url + f"api/games/price_history/{game_name}")
+        if response.status_code == 200:
+            price_history = response.json()
+            df_ph = pd.DataFrame(price_history.get("data", []))
+            df_ph = df_ph.rename(columns = {
+                                            "price": "Price",
+                                            "discount_pct": "Discount %",
+                                            "discount": "Discount",
+                
+            })
+            st.dataframe(df_ph, hide_index = True)
+        else:
+            st.error("Invalid Game Name")
+
     #refresh button to call the pipeline in the background
     st.write("Click this button to rescrape the data!")
     refresh_button = st.button("Refresh Data")
@@ -70,5 +88,3 @@ if sidebar == "Search":
     if refresh_button:
         url = base_url + "api/admin/run_etl_pipeline"
         response = requests.post(url)
-        if response.status_code == 200:
-            st.write("Request In Progress!")

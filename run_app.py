@@ -6,13 +6,12 @@
 
 import subprocess
 import time
-import pipeline
+import load
 if __name__ == "__main__":
     print("Starting FastAPI Backend: ")
     api_process = subprocess.Popen(["uvicorn", "api:app", "--port", "8000", "--reload"])
     print("Loading default data: ")
     time.sleep(5)
-    pipeline.main()
     print("Starting Streamlit Frontend")
     try:
         subprocess.run(["streamlit", "run", "app.py"])

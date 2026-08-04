@@ -77,7 +77,11 @@ if sidebar == "Search":
                                             "discount": "Discount",
                 
             })
-            st.dataframe(df_ph, hide_index = True)
+            df_ph.index = df_ph.index+1
+            st.dataframe(df_ph)
+            df_ph["Discount Amount"] = df_ph["Price"] - df_ph["Discount"]
+            st.subheader("Price in $ Over Snapshots")
+            st.line_chart(df_ph, y = "Discount Amount")
         else:
             st.error("Invalid Game Name")
 

@@ -6,16 +6,15 @@ CREATE TABLE steam_games (
     year_released INTEGER, 
     developer VARCHAR(255),
     publisher VARCHAR(255),
-    genre_list TEXT,
     genre_1 VARCHAR(255),
     genre_2 VARCHAR(255),
-    genre_3 VARCHAR(255),
+    genre_3 VARCHAR(255)
 )
 
 -- price history table
 CREATE TABLE steam_price_history (
     snapshot_id BIGSERIAL PRIMARY KEY,
-    game_id VARCHAR(50) NOT NULL REFERENCES steam_games(game_id) ON DELETE CASCADE
+    game_id VARCHAR(50) NOT NULL REFERENCES steam_games(game_id) ON DELETE CASCADE,
     price NUMERIC(5, 2),
     discount NUMERIC(5, 2),
     discount_pct NUMERIC(5, 2),

@@ -14,6 +14,8 @@ def release_date(df):
 def price(df):
     df["Price"] = df["Price"].replace("Free To Play", "0")
     df["Price"] = df["Price"].replace(to_replace = r"(?i).*Free.*", value = "0", regex = True)
+    df["Price"] = df["Price"].replace(to_replace = r"(?i).*Pass.*", value = "0", regex = True)
+    df["Price"] = df["Price"].replace(to_replace = r"(?i).*Note.*", value = "0", regex = True)
     df["Price"] = df["Price"].replace("No Price", "0")
     df["Price"] = df["Price"].str.replace("/ month", "", regex=False)
     df["Price"] = df["Price"].replace(to_replace = r"(?i).*demo.*", value = "0", regex = True)
@@ -78,6 +80,6 @@ def main():
     df.to_parquet(path = fp)
     df.to_csv(path_or_buf = fp2)
     print("Successfully transformed!\n")
-    
+
 if __name__ == "__main__":
     main()

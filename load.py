@@ -16,7 +16,7 @@ def connect():
     return engine
 
 def read_df():
-    df = pd.read("raw/cleaned_steam_games.parquet")
+    df = pd.read_parquet("raw/cleaned_steam_games.parquet")
     return df
 
 def split_df(df): #splits the df into two dataframes that abide by the schema
@@ -63,7 +63,7 @@ def load_database(df_games, df_price):
         conn.execute(upsert_query)
         df_price.to_sql("steam_price_history", con=engine, if_exists="append", index=False)
 
-        
+
     print("Database updated successfully\n")
 
 
@@ -71,3 +71,6 @@ def main():
     df = read_df()
     load_database(split_df(df))
     print("Successfully Loaded!\n")
+
+if __name__ == "__main__":
+    main()

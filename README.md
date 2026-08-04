@@ -2,6 +2,7 @@
 author: sens24\
 This repository contains the code for the steam store web scraper and the frontend created with streamlit\
 Built by me to find the latest deals and top rated games on the steam store, live with snapshots of price history
+Tech Stack used: Jupyter Notebook, Python (pandas, requests, os), PostgreSQL, SQL, SQLalchemy, BeautifulSoup, streamlit
 
 # Prerequisites
 you need uv installed (pip install uv)

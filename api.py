@@ -14,8 +14,9 @@ app = FastAPI()
 
 #connect to the database
 load_dotenv()
+db_user = os.getenv("POSTGRES_USERNAME")
 db_password = os.getenv("POSTGRES_PASSWORD")
-db_url = f"postgresql+psycopg2://postgres:{db_password}@localhost:5432/steam"
+db_url = f"postgresql+psycopg2://{db_user}:{db_password}@localhost:5432/steam"
 engine = create_engine(db_url, poolclass = NullPool)
 
 @app.get("/")

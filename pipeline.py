@@ -2,6 +2,7 @@
 import scraper
 import transform
 import load
+
 def main():
     scraper.main()
     transform.main()

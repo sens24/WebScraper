@@ -5,7 +5,7 @@ import sys
 
 def ensure_postgres_running():
     # Service name varies by PostgreSQL version (check yours in services.msc)
-    service_name = "postgresql-x64-16"
+    service_name = "postgresql-x64-18"
     
     try:
         # Check service status or attempt to start it

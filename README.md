@@ -20,4 +20,3 @@ uv run run_app_first_time.py \
 if it is your first time
 
 
-

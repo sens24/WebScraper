@@ -55,7 +55,7 @@ if sidebar == "Search":
                     "developer": "Developer",
                     "price": "Price ($)",
                     "discount_pct": "Discount (%)",
-                    "discount": "Discount ($)",
+                    "discount": "Discounted Price ($)",
                     "total_reviews": "Total Reviews",
                     "positive_reviews": "Positive Reviews"
                 }

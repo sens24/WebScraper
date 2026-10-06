@@ -37,7 +37,7 @@ From the airflow-docker folder:
 powershell
 docker compose up -d       # start Airflow\
 docker compose ps          # check services are healthy\
-docker compose down        # stop and remove containers\
+docker compose down        # stop and remove containers
 
 Once running:
 
@@ -46,12 +46,12 @@ Log in with airflow / airflow (default for local use only)\
 Find etl_pipeline under Dags\
 Flip the toggle to unpause it\
 Click the trigger (play) button to run it now\
-Open the run, click a task, then Logs to see output\
+Open the run, click a task, then Logs to see output
 
-By default the DAG also runs on its schedule (@daily).\
+By default the DAG also runs on its schedule (@daily).
 
 The DAG
-dags/etl_pipeline.py defines three BashOperator tasks that run the scripts in order:\
+dags/etl_pipeline.py defines three BashOperator tasks that run the scripts in order:
 
 python\
 extract >> transform >> load

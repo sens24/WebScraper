@@ -85,10 +85,3 @@ if sidebar == "Search":
         else:
             st.error("Invalid Game Name")
 
-    #refresh button to call the pipeline in the background
-    st.write("Click this button to rescrape the data!")
-    refresh_button = st.button("Refresh Data")
-
-    if refresh_button:
-        url = base_url + "api/admin/run_etl_pipeline"
-        response = requests.post(url)

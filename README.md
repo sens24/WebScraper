@@ -20,3 +20,8 @@ uv run run_app_first_time.py \
 if it is your first time
 
 
+## For Docker/Airflow startup
+cd to the airflow-docker folder and run
+docker compose up -d
+open localhost:8080 and login with airflow user, airflow pass
+turn on pipeline if you want daily scraping

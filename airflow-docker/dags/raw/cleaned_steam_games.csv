@@ -1,0 +1,11 @@
+,GameID,Name,Release Date,Price,Discount,Developer,Publisher,Total Reviews,Positive Reviews,Negative Reviews,Review Sentiment,Genre(s),Genre1,Genre2,Genre3,Year Released,Discount %,Positive Reviews %,Negative Reviews %
+0,730,Counter-Strike 2,2012-08-21,0.0,0.0,Valve,Valve,0,0,0,Mostly Positive,"['Action', 'Free To Play']",Action,Free To Play,,2012,,,
+1,3010850,Gears of War: E-Day,2026-10-06,69.99,0.0,The Coalition,Xbox Game Studios,0,0,0,Mostly Positive,"['Action', 'Adventure']",Action,Adventure,,2026,,,
+2,3393110,AION 2,2026-10-05,0.0,0.0,NC,NC,0,0,0,Mixed,"['Action', 'Adventure', 'Massively Multiplayer', 'RPG']",Action,Adventure,Massively Multiplayer,2026,,,
+3,1867240,WARDOGS,2026-09-10,39.99,0.0,BULKHEAD,Team17,0,0,0,Mostly Positive,"['Action', 'Indie', 'Massively Multiplayer', 'Simulation']",Action,Indie,Massively Multiplayer,2026,,,
+4,2288340,ACE COMBAT 8: WINGS OF THEVE,2026-10-01,69.99,0.0,Bandai Namco Aces Inc.,Bandai Namco Entertainment Inc.,0,0,0,Very Positive,['Action'],Action,,,2026,,,
+5,4019220,Dressmaker,2026-09-21,14.99,0.0,Cozy Lives,Free Lives,0,0,0,Overwhelmingly Positive,"['Casual', 'Simulation']",Casual,Simulation,,2026,,,
+6,381210,Dead by Daylight,2016-06-14,19.99,7.99,Behaviour Interactive Inc.,Behaviour Interactive Inc.,0,0,0,Mostly Positive,['Action'],Action,,,2016,60.0,,
+7,230410,Warframe,2013-03-25,0.0,0.0,Digital Extremes,Digital Extremes,0,0,0,Very Positive,"['Action', 'RPG', 'Free To Play']",Action,RPG,Free To Play,2013,,,
+8,4078430,STAR WARS: Galactic Racer™,2026-10-06,59.99,0.0,Fuse Games,Secret Mode,0,0,0,Mostly Positive,"['Action', 'Adventure', 'Racing', 'Simulation']",Action,Adventure,Racing,2026,,,
+9,1091500,Cyberpunk 2077,2020-12-09,59.99,17.99,CD PROJEKT RED,CD PROJEKT RED,0,0,0,Very Positive,['RPG'],RPG,,,2020,70.0,,

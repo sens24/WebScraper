@@ -4,7 +4,7 @@ import pandas as pd
 import time
 import attribute_module
 
-def find_app_ids(begin = 0, limit = 500): #set a default limit of 200
+def find_app_ids(begin = 0, limit = 10): #set a default limit of 200
     #create a dictionary that maps app id to app name
     #each "page" of the search has 50 games
     count_per_page = 50
@@ -98,6 +98,14 @@ def transform_csv(df):
 
 def main():
     dict = visit_page()
+
+    dic = visit_page()
+    for k, v in dic.items():
+        if len(v) != 12:
+            print("BAD ROW:", k, len(v), v)
+    df = transform_df(dic)
+    transform_csv(df)
+    
     df = transform_df(dict)
     transform_csv(df)
 

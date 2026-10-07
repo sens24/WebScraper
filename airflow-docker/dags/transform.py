@@ -28,14 +28,9 @@ def price(df):
     return df
 
 def reviews(df):
-    df["Total Reviews"] = df["Total Reviews"].str.replace(",", "")
-    df["Total Reviews"] = df["Total Reviews"].astype("int64")
-
-    df["Positive Reviews"] = df["Positive Reviews"].str.replace(",", "")
-    df["Positive Reviews"] = df["Positive Reviews"].astype("int64")
-
-    df["Negative Reviews"] = df["Negative Reviews"].str.replace(",", "")
-    df["Negative Reviews"] = df["Negative Reviews"].astype("int64")
+    for col in ["Total Reviews", "Positive Reviews", "Negative Reviews"]:
+        cleaned = df[col].astype(str).str.replace(",", "", regex=False)
+        df[col] = pd.to_numeric(cleaned, errors="coerce").fillna(0).astype("int64")
     return df
 
 

@@ -6,7 +6,6 @@ from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
 import psycopg2
 import os
-import pipeline
 from sqlalchemy.pool import NullPool
 import multiprocessing 
 

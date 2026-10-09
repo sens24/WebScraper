@@ -19,6 +19,8 @@ or\
 uv run run_app_first_time.py \
 if it is your first time
 
+First-time setup for Docker/Airflow
+Run in PowerShell:
 
 ## For Docker/Airflow startup
 cd to the airflow-docker folder and run

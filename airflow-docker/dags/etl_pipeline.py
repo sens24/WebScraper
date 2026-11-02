@@ -7,7 +7,7 @@ with DAG("etl_pipeline", schedule="@daily",
 
     extract = BashOperator(
         task_id="extract",
-        bash_command="cd /opt/airflow/dags && python scraper.py",
+        bash_command="cd /opt/airflow/dags && python -u scraper.py",
     )
     transform = BashOperator(
         task_id="transform",

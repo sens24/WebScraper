@@ -80,6 +80,7 @@ def get_game_price_history(game_name : str = Path(description = "Name of the gam
 
     return {"game_name": game_name, "data": list(result)}
 
+#endpoint to check database health and the size of the database presently
 @app.get("/api/games/database_health")
 def get_database_health():
     try:
@@ -99,7 +100,6 @@ def get_database_health():
         "games": games,
         "price_snapshots": snapshots,
         "snapshots_matching_discount_query": discounted,
-        "server_address": db_host,
     }
     
     

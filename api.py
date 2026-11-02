@@ -82,13 +82,27 @@ def get_game_price_history(game_name : str = Path(description = "Name of the gam
 
 @app.get("/api/games/database_health")
 def get_database_health():
-    query = text("""
-                 SELECT COUNT(*) FROM steam_games;
-                 """)
-    with engine.begin() as conn:
-        result = conn.execute(query)
-    return result
+    try:
+        with engine.begin() as conn:
+            games = conn.execute(text("SELECT COUNT(*) FROM steam_games")).scalar()
+            snapshots = conn.execute(text("SELECT COUNT(*) FROM steam_price_history")).scalar()
+            discounted = conn.execute(text("""
+                SELECT COUNT(*) FROM steam_price_history
+                WHERE total_reviews > 5000 AND discount_pct > 0
+            """)).scalar()
+            db_host = conn.execute(text("SELECT inet_server_addr()::text")).scalar()
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Database unreachable: {type(e).__name__}")
 
+    return {
+        "status": "ok",
+        "games": games,
+        "price_snapshots": snapshots,
+        "snapshots_matching_discount_query": discounted,
+        "server_address": db_host,
+    }
+    
+    
 #endpoint to refresh web scraping
 @app.post("/api/admin/run_etl_pipeline")
 async def run_etl_pipeline(background_tasks: BackgroundTasks):

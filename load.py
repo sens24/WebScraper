@@ -5,15 +5,10 @@ from dotenv import load_dotenv
 import os
 import psycopg2
 from sqlalchemy import create_engine, text
+from db import get_engine
 
 def connect():
-    load_dotenv()
-    db_password = os.getenv('POSTGRES_PASSWORD')
-    db_url = f"postgresql+psycopg2://postgres:{db_password}@localhost:5432/steam"
-
-    #to_sql requires an engine
-    engine = create_engine(db_url)
-    return engine
+    return get_engine()
 
 def read_df():
     df = pd.read_parquet("raw/cleaned_steam_games.parquet")

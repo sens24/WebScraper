@@ -9,7 +9,7 @@ CREATE TABLE steam_games (
     genre_1 VARCHAR(255),
     genre_2 VARCHAR(255),
     genre_3 VARCHAR(255)
-)
+);
 
 -- price history table
 CREATE TABLE steam_price_history (
@@ -24,7 +24,7 @@ CREATE TABLE steam_price_history (
     review_sentiment VARCHAR(255),
     positive_reviews_pct NUMERIC(5, 2),
     negative_reviews_pct NUMERIC(5, 2)
-)
+);
 
 
 -- ,Name,Release Date,Price,Discount,Developer,Publisher,Total Reviews,Positive Reviews,Negative Reviews,Review Sentiment,Genre(s),Genre1,Genre2,Genre3,Year Released,Discount %,Positive Reviews %,Negative Reviews %

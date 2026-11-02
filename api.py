@@ -8,15 +8,13 @@ import psycopg2
 import os
 from sqlalchemy.pool import NullPool
 import multiprocessing 
+from db import get_engine
 
 app = FastAPI()
 
 #connect to the database
 load_dotenv()
-db_user = os.getenv("POSTGRES_USERNAME")
-db_password = os.getenv("POSTGRES_PASSWORD")
-db_url = f"postgresql+psycopg2://{db_user}:{db_password}@localhost:5432/steam"
-engine = create_engine(db_url, poolclass = NullPool)
+engine = get_engine()
 
 @app.get("/")
 def root():
@@ -82,6 +80,14 @@ def get_game_price_history(game_name : str = Path(description = "Name of the gam
 
     return {"game_name": game_name, "data": list(result)}
 
+@app.get("/api/games/database_health")
+def get_database_health():
+    query = text("""
+                 SELECT COUNT(*) FROM steam_games;
+                 """)
+    with engine.begin() as conn:
+        result = conn.execute(query)
+    return result
 
 #endpoint to refresh web scraping
 @app.post("/api/admin/run_etl_pipeline")

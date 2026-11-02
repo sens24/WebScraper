@@ -98,13 +98,6 @@ def transform_csv(df):
 
 def main():
     dict = visit_page()
-
-    dic = visit_page()
-    for k, v in dic.items():
-        if len(v) != 12:
-            print("BAD ROW:", k, len(v), v)
-    df = transform_df(dic)
-    transform_csv(df)
     
     df = transform_df(dict)
     transform_csv(df)

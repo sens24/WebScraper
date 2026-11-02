@@ -4,7 +4,7 @@ import pandas as pd
 import time
 import attribute_module
 
-def find_app_ids(begin = 0, limit = 10): #set a default limit of 200
+def find_app_ids(begin = 0, limit = 200): #set a default limit of 200
     #create a dictionary that maps app id to app name
     #each "page" of the search has 50 games
     count_per_page = 50
@@ -57,7 +57,7 @@ def find_app_ids(begin = 0, limit = 10): #set a default limit of 200
     return dict
 
 def visit_page():
-    dict = find_app_ids(begin = 0, limit = 500)
+    dict = find_app_ids(begin = 0, limit = 15)
     base_url = "https://store.steampowered.com/app/"
     #https://store.steampowered.com/app/730/CounterStrike_2/
     #example app format: url + id + "/" + Name + "/"

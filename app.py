@@ -13,32 +13,40 @@ sidebar = st.sidebar.selectbox("Select:", ["Charts", "Search"])
 if sidebar == "Charts":
     st.subheader("Top Discounts")
     response = requests.get(base_url + "api/games/top_discounts")
-    discount_data = response.json()
-    df_discounts = pd.DataFrame(discount_data["top_discounts"])
-    df_discounts.index = df_discounts.index+1
-    df_discounts = df_discounts.rename(
-        columns={
-            "game_name": "Game Title",
-            "developer": "Developer",
-            "price": "Price ($)",
-            "discount": "Discount ($)",
-                "discount_pct": "Discount (%)",
-        }
-        )
-    st.dataframe(df_discounts)
+    if response.status_code == 200:
+        discount_data = response.json()
+        df_discounts = pd.DataFrame(discount_data["top_discounts"])
+        df_discounts.index = df_discounts.index+1
+        df_discounts = df_discounts.rename(
+            columns={
+                "game_name": "Game Title",
+                "developer": "Developer",
+                "price": "Price ($)",
+                "discount": "Discount ($)",
+                    "discount_pct": "Discount (%)",
+            }
+            )
+        st.dataframe(df_discounts)
+    else:
+        st.warning("No data available.")
+        
+
 
     st.subheader("Top Rated")
     response = requests.get(base_url + "api/games/top_reviews")
-    reviews_data = response.json()
-    df_reviews = pd.DataFrame(reviews_data["top_reviews"])
-    df_reviews.index = df_reviews.index+1
-    df_reviews = df_reviews.rename(columns = {
-        "game_name": "Game Title",
-        "developer": "Developer",
-        "total_reviews" : "Total Reviews",
-        "positive_reviews_pct": "Positive Review %",
-    })
-    st.dataframe(df_reviews)
+    if response.status_code == 200:
+        reviews_data = response.json()
+        df_reviews = pd.DataFrame(reviews_data["top_reviews"])
+        df_reviews.index = df_reviews.index+1
+        df_reviews = df_reviews.rename(columns = {
+            "game_name": "Game Title",
+            "developer": "Developer",
+            "total_reviews" : "Total Reviews",
+            "positive_reviews_pct": "Positive Review %",
+        })
+        st.dataframe(df_reviews)
+    else:
+        st.warning("No data available.")
 
 
 if sidebar == "Search":
